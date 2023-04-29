@@ -18,8 +18,8 @@ class Diagnosa extends Component
     public $gjlTanaman = [];
 
     public $showJNS = 'false';
-    public $showBGN = 'false';
-    public $showGJL = 'false';
+    public $showBGN = [];
+    public $showGJL = [];
 
     public function render()
     {
@@ -35,6 +35,13 @@ class Diagnosa extends Component
             ])
             ->section('page');
     }
+    public function mount()
+    {
+        $this->showBGN[0] = 'false';
+        $this->showGJL[0] = 'false';
+        $this->showBGN[1] = 'false';
+        $this->showGJL[1] = 'false';
+    }
 
     public function ResetISI($id)
     {
@@ -42,12 +49,12 @@ class Diagnosa extends Component
     }
     public function showBagian($id)
     {
-        $this->showBGN = 'true';
+        $this->showBGN[$id] = 'true';
         $this->ResetISI($id);
     }
     public function showGejala($id)
     {
-        $this->showGJL = 'true';
+        $this->showGJL[$id] = 'true';
         $this->ResetISI($id);
     }
 
@@ -61,6 +68,8 @@ class Diagnosa extends Component
         $i = $i + 1;
         $this->i = $i;
         array_push($this->inputs, $i);
+        array_push($this->showBGN, $i);
+        array_push($this->showGJL, $i);
     }
 
     public function remove($i)
@@ -77,67 +86,76 @@ class Diagnosa extends Component
 
     public function store()
     {
-        // $validatedDate = $this->validate([
-        //         'account.0' => 'required',
-        //         'username.0' => 'required',
-        //         'account.*' => 'required',
-        //         'username.*' => 'required',
-        //     ],
-        //     [
-        //         'account.0.required' => 'Account field is required',
-        //         'username.0.required' => 'Username field is required',
-        //         'account.*.required' => 'Account field is required',
-        //         'username.*.required' => 'Username field is required',
-        //     ]
-        // );
+        $this->validate([
+                'jnsTanaman.0' => 'required',
+                'bgnTanaman.0' => 'required',
+                'gjlTanaman.0' => 'required',
+                'jnsTanaman.*' => 'required',
+                'bgnTanaman.*' => 'required',
+                'gjlTanaman.*' => 'required',
+            ],
+            [
+                'jnsTanaman.0.required' => 'Jenis Tanaman Harus Di isi',
+                'bgnTanaman.0.required' => 'Bagian Tanaman Harus Di isi',
+                'gjlTanaman.0.required' => 'Gejala Harus Di isi',
+                'jnsTanaman.*.required' => 'Jenis Tanaman Harus Di isi',
+                'bgnTanaman.*.required' => 'Bagian Tanaman Harus Di isi',
+                'gjlTanaman.*.required' => 'Gejala Harus Di isi',
+            ]
+        );
         // $user = Auth::user()->idUser;
-        foreach ($this->jnsTanaman as $key => $value) {
-            // $diagnosaa =  ModelsDiagnosa::create(['idUser' => $user, 'tanggal' => Carbon::now()]);
-            $diagnosaa = new ModelsDiagnosa();
-            $diagnosaa->idUser = Auth::user()->idUser;
-            $diagnosaa->tanggal = Carbon::now();
-            $diagnosaa->save();
 
-            foreach ($this->gjlTanaman[$key] as $item) {
-                detailDiagnosa::create([
-                    'idDiagnosa' => $diagnosaa->id, 'idDetailPenyakit' => $item
-                ]);
-            }
+        if (is_null($this->jnsTanaman)) {
+            return @dd('aaa');
+        } else {
 
-            $loop = ['iteration' => 0, 'count' => count($diagnosaa->DiagnosaToDetail->unique('relasidetailPenyakit.detailPenyakitToPenyakit.namaPenyakit'))];
-            foreach ($diagnosaa->DiagnosaToDetail->unique('relasidetailPenyakit.detailPenyakitToPenyakit.namaPenyakit') as $p) {
-                $loop['iteration']++;
-                if ($loop['count'] > 1) {
-                    $v = 0;
-                    break;
+            foreach ($this->jnsTanaman as $key => $value) {
+                // $diagnosaa =  ModelsDiagnosa::create(['idUser' => $user, 'tanggal' => Carbon::now()]);
+                $diagnosaa = new ModelsDiagnosa();
+                $diagnosaa->idUser = Auth::user()->idUser;
+                $diagnosaa->tanggal = Carbon::now();
+                $diagnosaa->save();
+
+                foreach ($this->gjlTanaman[$key] as $item) {
+                    detailDiagnosa::create([
+                        'idDiagnosa' => $diagnosaa->id, 'idDetailPenyakit' => $item
+                    ]);
+                }
+
+                $loop = ['iteration' => 0, 'count' => count($diagnosaa->DiagnosaToDetail->unique('relasidetailPenyakit.detailPenyakitToPenyakit.namaPenyakit'))];
+                foreach ($diagnosaa->DiagnosaToDetail->unique('relasidetailPenyakit.detailPenyakitToPenyakit.namaPenyakit') as $p) {
+                    $loop['iteration']++;
+                    if ($loop['count'] > 1) {
+                        $v = 0;
+                        break;
+                    } else {
+                        $v = 1;
+                    }
+                }
+                if ($v == 0) {
+                    $diagnosaa->update([
+                        'status' => 'Tidak Valid'
+                    ]);
                 } else {
-                    $v = 1;
+
+                    Laporan::create([
+                        'namaPengguna' => Auth::user()->namaPengguna,
+                        'tglDiagnosa' => Carbon::now(),
+                        'penyakit' => $diagnosaa->DiagnosaToDetail[0]->RelasidetailPenyakit->DetailPenyakitToPenyakit->namaPenyakit,
+                        'obat' =>  $diagnosaa->DiagnosaToDetail[0]->RelasidetailPenyakit->DetailPenyakitToPenyakit->penyakitToObat[0]->namaObat,
+
+                    ]);
                 }
             }
-                        if($v== 0){
-                            $diagnosaa->update([
-                                'status' => 'Tidak Valid'
-                            ]);
-                        }else{
 
-                            Laporan::create([
-                                'namaPengguna' => Auth::user()->namaPengguna,
-                                'tglDiagnosa'=> Carbon::now(),
-                                'penyakit' => $diagnosaa->DiagnosaToDetail[0]->RelasidetailPenyakit->DetailPenyakitToPenyakit->namaPenyakit,
-                                'obat' =>  $diagnosaa->DiagnosaToDetail[0]->RelasidetailPenyakit->DetailPenyakitToPenyakit->penyakitToObat[0]->namaObat,
-
-                            ]);
-                        }
+            // $this->inputs = [];
 
 
+            // $this->resetInputFields();
+            return redirect()->route('hasil-diagnosa', $diagnosaa->key);
         }
 
-        // $this->inputs = [];
-
-
-        // $this->resetInputFields();
-return redirect()->route('hasil-diagnosa',$diagnosaa->key);
-// return @dd( $v);
+        // return @dd( $v);
         // session()->flash('message', 'Account Added Successfully.');
     }
 }

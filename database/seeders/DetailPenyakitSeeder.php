@@ -21,5 +21,17 @@ class DetailPenyakitSeeder extends Seeder
             'Buah' => 'Mangga',
             'Bagian' => 'Buah'
         ]);
+        DetailPenyakit::create([
+            'idPenyakit' => 'P-01',
+            'idGejala'=>'G-02',
+            'Buah' => 'Mangga',
+            'Bagian' => 'Buah'
+        ]);
+        DetailPenyakit::create([
+            'idPenyakit' => 'P-02',
+            'idGejala'=>'G-03',
+            'Buah' => 'Mangga',
+            'Bagian' => 'Buah'
+        ]);
     }
 }

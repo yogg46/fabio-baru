@@ -1,4 +1,5 @@
 <div>
+
     <form>
         <div class="block block-rounded">
             <div class="block-header block-header-default">
@@ -16,6 +17,40 @@
                 {{-- @foreach ($inputs as $key => $value) --}}
                 <div class="row push">
                     <div class="col-lg-12 col-xl-12">
+                        {{-- @error("inputs.{$key}") <span class="error">{{ $message }}</span> @enderror --}}
+
+                        @error('jnsTanaman.0')
+                        <div class="mb-1">
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <p class="mb-0">
+                                    {{ $message }}
+                                </p>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>
+
+                        </div>
+                        @enderror
+
+                        @error('bgnTanaman.0')
+                        <div class="mb-1">
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <p class="mb-0">
+                                    {{ $message }}
+                                </p>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>
+                        </div>
+                        @enderror
+                        @error('gjlTanaman.0')
+                        <div class="mb-1">
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <p class="mb-0">
+                                    {{ $message }}
+                                </p>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>
+                        </div>
+                        @enderror
                         <div class="mb-1">
                             <label class="form-label">Jenis Tanaman </label>
                             <div class="row space-y-2">
@@ -83,7 +118,7 @@
                         </div>
                     </div>
                 </div>
-                @if ($showBGN == 'true')
+                @if ($showBGN[0] == 'true')
                     <div class="row">
                         <div class="col-lg-12 col-xl-12">
                             <div class="mb-1">
@@ -143,10 +178,10 @@
                     </div>
                 </div>
             </div> --}}
-                @if ($showGJL == 'true')
-                    <div class="col-lg-12 col-xl-12">
+                @if ($showGJL[0] == 'true')
+                    <div  class="col-lg-12 col-xl-12">
                         <div class="mb-5">
-                            <label class="form-label">Pilih Gejala </label>
+                            <label class="form-label">Pilih Gejala  </label>
                             @php
                                 $no = 0;
                             @endphp
@@ -158,9 +193,9 @@
                                                 <div class="space-y-2">
                                                     <div class="col">
 
-                                                        <div class="form-check d-flex align-items-center">
+                                                        <div  class="form-check d-flex align-items-center">
                                                             <div>
-                                                                <input class="form-check-input"
+                                                                <input  class="form-check-input"
                                                                     name="option{{ $key->id }}" type="checkbox"
                                                                     id="option{{ $key->id }}"
                                                                     value="{{ $key->id }}"
@@ -202,6 +237,7 @@
                 </div>
             </div>
         </div>
+       
         @foreach ($inputs as $key => $value)
             <div class="block block-rounded">
                 <div class="block-header block-header-default">
@@ -216,6 +252,38 @@
                     <!-- DataTables init on table by adding .js-dataTable-full-pagination class, functionality is initialized in js/pages/be_tables_datatables.min.js which was auto compiled from _js/pages/be_tables_datatables.js -->
                     <div class="row push">
                         <div class="col-lg-12 col-xl-12">
+                            @error('jnsTanaman.'.$value)
+                        <div class="mb-1">
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <p class="mb-0">
+                                    {{ $message }}
+                                </p>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>
+
+                        </div>
+                        @enderror
+
+                        @error('bgnTanaman.'.$value)
+                        <div class="mb-1">
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <p class="mb-0">
+                                    {{ $message }}
+                                </p>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>
+                        </div>
+                        @enderror
+                        @error('gjlTanaman.'.$value)
+                        <div class="mb-1">
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <p class="mb-0">
+                                    {{ $message }}
+                                </p>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>
+                        </div>
+                        @enderror
                             <div class="mb-1">
                                 <label class="form-label">Jenis Tanaman </label>
                                 <div class="row space-y-2">
@@ -302,7 +370,7 @@
                             </div>
                         </div>
                     </div>
-                    @if ($showBGN == 'true')
+                    @if ($showBGN[$value] == 'true')
                         <div class="row">
                             <div class="col-lg-12 col-xl-12">
                                 <div class="mb-1">
@@ -357,7 +425,7 @@
                             </div>
                         </div>
                     @endif
-                    @if ($showGJL == 'true')
+                    @if ($showGJL[$value] == 'true')
                         <div class="col-lg-12 col-xl-12">
                             <div class="mb-5">
                                 <label class="form-label">Pilih Gejala </label>

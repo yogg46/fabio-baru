@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('idUser');
             $table->string('tanggal');
             $table->string('key')->nullable();
+            $table->string('status')->nullable();
             $table->foreign('idUser')->references('idUser')->on('users');
             $table->timestamps();
         });
